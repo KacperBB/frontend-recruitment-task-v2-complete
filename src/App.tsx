@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { ProductConfigurator } from './components/ProductConfigurator/ProductConfigurator';
-import { mockProduct } from './data/mockProduct';
+import { mockProduct, mockProductSimple } from './data/mockProduct';
 import type { Configuration, PriceBreakdown } from './components/ProductConfigurator/types';
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
       padding: '24px'
     }}>
       <ProductConfigurator
-        product={mockProduct}
+        product={mockProductSimple}
         onConfigurationChange={handleConfigurationChange}
         onAddToCart={handleAddToCart}
       />

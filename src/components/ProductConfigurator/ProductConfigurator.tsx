@@ -267,7 +267,9 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
   useEffect(() => {
     if (showShareModal) {
       const encoded = encodeConfigurationToUrl(currentConfig);
-      const url = `${window.location.origin}${window.location.pathname}?config=${encoded}`;
+      // Use encodeURIComponent to safely encode the base64 string for URLs with special characters
+      const safeEncoded = encodeURIComponent(encoded);
+      const url = `${window.location.origin}${window.location.pathname}?config=${safeEncoded}`;
       setShareUrl(url);
     }
   }, [showShareModal, currentConfig]);
@@ -277,11 +279,16 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
     const encodedConfig = params.get("config");
 
     if (encodedConfig) {
-      const decoded = decodeConfigurationFromUrl(encodedConfig);
-      if (decoded) {
-        if (decoded.selections) setSelections(decoded.selections);
-        if (decoded.addOns) setSelectedAddOns(decoded.addOns);
-        if (decoded.quantity) setQuantity(decoded.quantity);
+      try {
+        const decoded = decodeConfigurationFromUrl(encodedConfig);
+        if (decoded) {
+          if (decoded.selections) setSelections(decoded.selections);
+          if (decoded.addOns) setSelectedAddOns(decoded.addOns);
+          if (decoded.quantity) setQuantity(decoded.quantity);
+        }
+      } catch (error) {
+        console.error('Failed to load configuration from URL:', error);
+        setError('Failed to load configuration from share link. Please try again or use a new configuration.');
       }
     }
   }, []);
