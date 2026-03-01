@@ -558,19 +558,32 @@
 
 /* Error Display */
 .error-message {
-  padding: 12px 16px;
+  padding: 16px;
   background: #fdeaea;
   border: 1px solid #f5c6cb;
   border-radius: 6px;
   color: #721c24;
   font-size: 14px;
   margin-bottom: 16px;
+  line-height: 1.5;
 }
 
-.error-code {
-  font-family: monospace;
-  font-size: 12px;
-  opacity: 0.7;
+.error-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.error-description {
+  margin-bottom: 8px;
+}
+
+.error-action {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(114, 28, 36, 0.2);
 }
 
 /* Validation Warnings */

@@ -34,7 +34,7 @@ import type {
   Draft,
   ValidationResult,
 } from "./types";
-import { ERROR_CODES } from "./types";
+import { ERROR_CODES, ERROR_MESSAGES } from "./types";
 import { usePriceCalculation } from "../../hooks/usePriceCalculation";
 import {
   validateConfiguration,
@@ -288,7 +288,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
         }
       } catch (error) {
         console.error('Failed to load configuration from URL:', error);
-        setError('Failed to load configuration from share link. Please try again or use a new configuration.');
+        setError(ERROR_CODES.UNKNOWN);
       }
     }
   }, []);
@@ -606,7 +606,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
         </div>
         {nextTier && (
           <p className="next-discount-hint">
-            Add {nextTier.needed} more for {nextTier.discount}% discount!
+            💰 Buy {nextTier.needed} more for {nextTier.discount}% off!
           </p>
         )}
       </div>
@@ -688,7 +688,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
             {!isAvailable && addOn.dependsOn && (
               <span style={{ color: "#e74c3c" }}>
                 {" "}
-                (Requires {addOn.dependsOn.optionId})
+                (Requires "{product.options.find(o => o.id === addOn.dependsOn?.optionId)?.name ?? addOn.dependsOn.optionId}")
               </span>
             )}
           </div>
@@ -940,8 +940,19 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
 
       {(error || priceError) && (
         <div className="error-message">
-          <div>Something went wrong. Please try again.</div>
-          <div className="error-code">Error: {error || priceError}</div>
+          {(() => {
+            const errorCode = (error || priceError) as keyof typeof ERROR_MESSAGES;
+            const errorInfo = ERROR_MESSAGES[errorCode];
+            return errorInfo ? (
+              <>
+                <div className="error-title">{errorInfo.title}</div>
+                <div className="error-description">{errorInfo.description}</div>
+                <div className="error-action">{errorInfo.action}</div>
+              </>
+            ) : (
+              <div>Something went wrong. Please try again or contact support.</div>
+            );
+          })()}
         </div>
       )}
 

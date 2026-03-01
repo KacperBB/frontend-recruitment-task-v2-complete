@@ -136,6 +136,42 @@ export const ERROR_CODES = {
 
 export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
 
+/**
+ * Map technical error codes to user-friendly messages with actionable steps
+ */
+export const ERROR_MESSAGES: Record<ErrorCode, { title: string; description: string; action: string }> = {
+  [ERROR_CODES.PRICE_CALC_FAILED]: {
+    title: 'Unable to calculate price',
+    description: 'We\'re having trouble calculating the price for your configuration.',
+    action: 'Please try adjusting your selections or refresh the page. If the problem persists, contact support.',
+  },
+  [ERROR_CODES.VALIDATION_CONFLICT]: {
+    title: 'Configuration conflict',
+    description: 'Some of your selections are not compatible together.',
+    action: 'Please review your choices and try a different combination.',
+  },
+  [ERROR_CODES.NETWORK_TIMEOUT]: {
+    title: 'Connection timeout',
+    description: 'The request is taking longer than expected.',
+    action: 'Please check your internet connection and try again. If the problem continues, contact support.',
+  },
+  [ERROR_CODES.INVALID_QUANTITY]: {
+    title: 'Invalid quantity',
+    description: 'The quantity you entered is not valid.',
+    action: 'Please enter a quantity between the minimum and maximum allowed.',
+  },
+  [ERROR_CODES.DEPENDENCY_MISSING]: {
+    title: 'Required option missing',
+    description: 'This selection requires another option to be selected first.',
+    action: 'Please select the required option and try again.',
+  },
+  [ERROR_CODES.UNKNOWN]: {
+    title: 'Something went wrong',
+    description: 'An unexpected error occurred while processing your request.',
+    action: 'Please try again or contact support if the problem persists.',
+  },
+};
+
 // Event types for callbacks
 export interface ConfigChangeEvent {
   type: 'option' | 'addon' | 'quantity';

@@ -63,9 +63,12 @@ export async function validateConfiguration(
       const currentValue = config.selections[option.id];
 
       if (currentValue && dependencyValue !== option.dependsOn.requiredValue) {
+        // Find the dependent option name for a friendlier message
+        const dependentOption = product.options.find(o => o.id === option.dependsOn.optionId);
+        const dependentName = dependentOption?.name ?? option.dependsOn.optionId;
         errors.push({
           code: 'VALIDATION_CONFLICT_47',
-          message: `${option.name} requires ${option.dependsOn.optionId} to be ${option.dependsOn.requiredValue}`,
+          message: `${option.name} requires "${dependentName}" to be selected`,
           optionId: option.id,
         });
       }
@@ -78,9 +81,12 @@ export async function validateConfiguration(
     if (addOn?.dependsOn) {
       const dependencyValue = config.selections[addOn.dependsOn.optionId];
       if (dependencyValue !== addOn.dependsOn.requiredValue) {
+        // Find the dependent option name for a friendlier message
+        const dependentOption = product.options.find(o => o.id === addOn.dependsOn.optionId);
+        const dependentName = dependentOption?.name ?? addOn.dependsOn.optionId;
         errors.push({
           code: 'ERR_DEP_MISSING_47',
-          message: `${addOn.name} requires ${addOn.dependsOn.optionId}`,
+          message: `${addOn.name} requires "${dependentName}" to be selected`,
           optionId: addOnId,
         });
       }
