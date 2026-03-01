@@ -122,9 +122,12 @@ export async function generatePreview(
   // In a real implementation, this would composite images based on selections
   // For now, just return the base product image with a cache-busting param
   const timestamp = Date.now();
+  
+  // Use & if URL already has query params, otherwise use ?
+  const separator = product.imageUrl.includes('?') ? '&' : '?';
 
   return {
-    imageUrl: `${product.imageUrl}?config=${config.id}&t=${timestamp}`,
+    imageUrl: `${product.imageUrl}${separator}config=${config.id}&t=${timestamp}`,
     generatedAt: timestamp,
   };
 }
