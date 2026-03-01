@@ -144,7 +144,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
   );
 
   const [isDirty, setIsDirty] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
 
   const [showDraftModal, setShowDraftModal] = useState(false);
@@ -377,7 +377,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
   const handleSaveDraft = useCallback(async () => {
     try {
       await saveDraft(currentConfig, draftName || "Untitled Draft");
-      setLastSaved(new Date());
+      setLastSaved(new Date().toISOString());
       setIsDirty(false);
       setDraftName("");
 
@@ -394,6 +394,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
         setSelections(draft.configuration.selections);
         setSelectedAddOns(draft.configuration.addOns);
         setQuantity(draft.configuration.quantity);
+        setLastSaved(draft.savedAt);
         setShowDraftModal(false);
         setIsDirty(false);
       }
@@ -475,7 +476,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
     const nameToSave = draftName.trim() || `Draft - ${new Date().toLocaleString()}`;
     try {
       await saveDraft(currentConfig, nameToSave);
-      setLastSaved(new Date());
+      setLastSaved(new Date().toISOString());
     } catch {
       console.error('Failed to save draft');
     }
@@ -1128,7 +1129,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
               <div className="draft-header">
                 <span className="draft-title">Draft saved</span>
                 <span className="draft-saved">
-                  Last saved: {lastSaved.toLocaleTimeString()}
+                  Last saved: {formatTimestamp(lastSaved)}
                 </span>
               </div>
             </div>
