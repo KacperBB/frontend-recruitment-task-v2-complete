@@ -196,19 +196,36 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
   // -------------------------------------------------------------------------
 
   useEffect(() => {
+    let resizeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
     const handleResize = () => {
-      if (colorPickerRef.current) {
-        const width = colorPickerRef.current.offsetWidth;
-        const cols = calculateColorColumns(width);
-        colorPickerRef.current.style.setProperty(
-          "--color-columns",
-          cols.toString(),
-        );
+      // Debounce resize handler to prevent excessive recalculations
+      if (resizeTimeoutId) {
+        clearTimeout(resizeTimeoutId);
       }
+
+      resizeTimeoutId = setTimeout(() => {
+        if (colorPickerRef.current) {
+          const width = colorPickerRef.current.offsetWidth;
+          const cols = calculateColorColumns(width);
+          colorPickerRef.current.style.setProperty(
+            "--color-columns",
+            cols.toString(),
+          );
+        }
+      }, 150); // 150ms debounce
     };
 
     window.addEventListener("resize", handleResize);
     handleResize();
+
+    // Cleanup: Remove event listener and clear pending timeout
+    return () => {
+      if (resizeTimeoutId) {
+        clearTimeout(resizeTimeoutId);
+      }
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   // Warn user about unsaved changes when trying to leave
