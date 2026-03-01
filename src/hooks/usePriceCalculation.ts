@@ -68,7 +68,7 @@ export function usePriceCalculation(
   // Fetch price when config changes
   useEffect(() => {
     fetchPrice();
-  }, [config?.selections, config?.addOns, config?.quantity]);
+  }, [config, product]);
 
   return {
     price,
