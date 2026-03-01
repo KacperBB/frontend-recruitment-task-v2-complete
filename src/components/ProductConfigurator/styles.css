@@ -44,6 +44,12 @@
   gap: 32px;
 }
 
+.draft-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
 @media (max-width: 900px) {
   .configurator-layout {
     grid-template-columns: 1fr;
@@ -51,6 +57,11 @@
   .configurator-header {
     flex-direction: column;
   }
+  .draft-buttons {
+  flex-direction: column;
+  gap: 10px;
+  width: 50%;
+}
 }
 
 /* Options Section */
@@ -717,3 +728,4 @@
   font-weight: 500;
   color: #333;
 }
+

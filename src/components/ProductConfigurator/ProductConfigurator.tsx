@@ -849,11 +849,10 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
                         Saved: {formatTimestamp(draft.savedAt)}
                       </div>
                     </div>
-                    <div>
+                    <div className='draft-buttons'>
                       <button
                         className="btn btn-secondary"
                         onClick={() => handleLoadDraft(draft.id)}
-                        style={{ marginRight: "8px" }}
                       >
                         Load
                       </button>
