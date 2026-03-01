@@ -50,6 +50,7 @@ import {
   formatPrice,
   getAppliedDiscountPercentage,
   getNextDiscountTier,
+  calculatePriceBreakdown,
 } from "../../utils/pricing";
 import "./styles.css";
 
@@ -151,6 +152,7 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
   const [showShareModal, setShowShareModal] = useState(false);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [compareDraftIds, setCompareDraftIds] = useState<string[]>([]);
 
   const [validation, setValidation] = useState<ValidationResult | null>(null);
 
@@ -190,6 +192,74 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
 
   const appliedDiscount = getAppliedDiscountPercentage(quantity);
   const nextTier = getNextDiscountTier(quantity);
+
+  const comparedDrafts = useMemo(
+    () => drafts.filter((draft) => compareDraftIds.includes(draft.id)).slice(0, 2),
+    [drafts, compareDraftIds],
+  );
+
+  const comparisonData = useMemo(() => {
+    if (comparedDrafts.length !== 2) return null;
+
+    const [leftDraft, rightDraft] = comparedDrafts;
+
+    const getOptionDisplayValue = (
+      option: ProductOption,
+      config: Configuration,
+    ): string => {
+      const rawValue = config.selections[option.id];
+      if (rawValue === undefined || rawValue === null) return "Not selected";
+
+      if (option.choices) {
+        const choice = option.choices.find((c) => c.value === rawValue);
+        return choice?.label ?? String(rawValue);
+      }
+
+      return String(rawValue);
+    };
+
+    const comparisonRows = product.options.map((option) => {
+      const leftValue = getOptionDisplayValue(option, leftDraft.configuration);
+      const rightValue = getOptionDisplayValue(option, rightDraft.configuration);
+
+      return {
+        label: option.name,
+        leftValue,
+        rightValue,
+        different: leftValue !== rightValue,
+      };
+    });
+
+    const leftAddOns = leftDraft.configuration.addOns
+      .map((id) => product.addOns.find((a) => a.id === id)?.name)
+      .filter(Boolean)
+      .join(", ") || "None";
+
+    const rightAddOns = rightDraft.configuration.addOns
+      .map((id) => product.addOns.find((a) => a.id === id)?.name)
+      .filter(Boolean)
+      .join(", ") || "None";
+
+    comparisonRows.push({
+      label: "Add-ons",
+      leftValue: leftAddOns,
+      rightValue: rightAddOns,
+      different: leftAddOns !== rightAddOns,
+    });
+
+    const leftPrice = calculatePriceBreakdown(leftDraft.configuration, product);
+    const rightPrice = calculatePriceBreakdown(rightDraft.configuration, product);
+    const priceDifference = Math.abs(leftPrice.total - rightPrice.total);
+
+    return {
+      leftDraft,
+      rightDraft,
+      comparisonRows,
+      leftTotal: leftPrice.total,
+      rightTotal: rightPrice.total,
+      priceDifference,
+    };
+  }, [comparedDrafts, product]);
 
   // -------------------------------------------------------------------------
   // Effects
@@ -292,6 +362,8 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
   useEffect(() => {
     if (showDraftModal) {
       getAllDrafts().then(setDrafts);
+    } else {
+      setCompareDraftIds([]);
     }
   }, [showDraftModal]);
 
@@ -424,9 +496,24 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
     try {
       await deleteDraft(draftId);
       setDrafts((prev) => prev.filter((d) => d.id !== draftId));
+      setCompareDraftIds((prev) => prev.filter((id) => id !== draftId));
     } catch {
       setError(ERROR_CODES.UNKNOWN);
     }
+  }, []);
+
+  const handleToggleCompareDraft = useCallback((draftId: string) => {
+    setCompareDraftIds((prev) => {
+      if (prev.includes(draftId)) {
+        return prev.filter((id) => id !== draftId);
+      }
+
+      if (prev.length >= 2) {
+        return [prev[1], draftId];
+      }
+
+      return [...prev, draftId];
+    });
   }, []);
 
   const handleAddToCart = useCallback(() => {
@@ -842,12 +929,23 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
             ) : (
               <ul className="draft-list">
                 {drafts.map((draft) => (
-                  <li key={draft.id} className="draft-list-item">
+                  <li
+                    key={draft.id}
+                    className={`draft-list-item ${compareDraftIds.includes(draft.id) ? "selected-for-compare" : ""}`}
+                  >
                     <div>
                       <div className="draft-item-name">{draft.name}</div>
                       <div className="draft-item-date">
                         Saved: {formatTimestamp(draft.savedAt)}
                       </div>
+                      <button
+                        type="button"
+                        className={`compare-toggle-btn ${compareDraftIds.includes(draft.id) ? "active" : ""}`}
+                        onClick={() => handleToggleCompareDraft(draft.id)}
+                        aria-pressed={compareDraftIds.includes(draft.id)}
+                      >
+                        {compareDraftIds.includes(draft.id) ? "Comparing" : "Compare"}
+                      </button>
                     </div>
                     <div className='draft-buttons'>
                       <button
@@ -867,6 +965,51 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
                 ))}
               </ul>
             )}
+
+            <div className="compare-section">
+              <h4>Compare Configurations</h4>
+              <p className="compare-hint">Select two drafts to compare side-by-side.</p>
+
+              {comparisonData ? (
+                <>
+                  <div className="compare-price-diff">
+                    Price difference: {formatPrice(comparisonData.priceDifference, product.currency)}
+                  </div>
+
+                  <div className="compare-grid">
+                    <div className="compare-grid-header">Option</div>
+                    <div className="compare-grid-header">
+                      {comparisonData.leftDraft.name}
+                      <div className="compare-total">
+                        {formatPrice(comparisonData.leftTotal, product.currency)}
+                      </div>
+                    </div>
+                    <div className="compare-grid-header">
+                      {comparisonData.rightDraft.name}
+                      <div className="compare-total">
+                        {formatPrice(comparisonData.rightTotal, product.currency)}
+                      </div>
+                    </div>
+
+                    {comparisonData.comparisonRows.map((row) => (
+                      <React.Fragment key={row.label}>
+                        <div className={`compare-cell compare-label ${row.different ? "different" : ""}`}>
+                          {row.label}
+                        </div>
+                        <div className={`compare-cell ${row.different ? "different" : ""}`}>
+                          {row.leftValue}
+                        </div>
+                        <div className={`compare-cell ${row.different ? "different" : ""}`}>
+                          {row.rightValue}
+                        </div>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="compare-empty">Choose two drafts to see differences and pricing.</div>
+              )}
+            </div>
 
             <div
               style={{
