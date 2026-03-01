@@ -297,24 +297,27 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
         [optionId]: value,
       }));
 
-      const option = product.options.find((o) => o.id === optionId);
-      if (option) {
-        const dependentAddOns = product.addOns.filter(
-          (a) => a.dependsOn?.optionId === optionId,
+      // Find all add-ons that depend on this option
+      const dependentAddOns = product.addOns.filter(
+        (a) => a.dependsOn?.optionId === optionId,
+      );
+
+      // Remove add-ons that are no longer available
+      if (dependentAddOns.length > 0) {
+        const addOnsToRemove = new Set(
+          dependentAddOns
+            .filter((a) => a.dependsOn && value !== a.dependsOn.requiredValue)
+            .map((a) => a.id),
         );
 
-        for (const addOn of dependentAddOns) {
-          if (addOn.dependsOn && value !== addOn.dependsOn.requiredValue) {
-            const index = selectedAddOns.indexOf(addOn.id);
-            if (index > -1) {
-              selectedAddOns.splice(index, 1);
-              setSelectedAddOns(selectedAddOns);
-            }
-          }
+        if (addOnsToRemove.size > 0) {
+          setSelectedAddOns((prev) =>
+            prev.filter((id) => !addOnsToRemove.has(id)),
+          );
         }
       }
     },
-    [product.options, product.addOns, selectedAddOns],
+    [product.options, product.addOns],
   );
 
   const handleAddOnToggle = useCallback(
@@ -610,6 +613,8 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
   };
 
   const renderAddOn = (addOn: AddOn) => {
+    if (!addOn || typeof addOn.price !== 'number') return null; // Defensive check
+    
     const isSelected = selectedAddOns.includes(addOn.id);
     const isAvailable = isAddOnAvailable(addOn, selections);
 
@@ -670,9 +675,11 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
 
         {price.addOnCosts.map((cost, i) => {
           const addOn = product.addOns.find((a) => a.id === cost.addOnId);
+          if (!addOn) return null; // Skip if add-on not found
+          
           return (
             <div className="price-line" key={i}>
-              <span>{addOn?.name || cost.addOnId}</span>
+              <span>{addOn.name}</span>
               <span>+{formatPrice(cost.amount, product.currency)}</span>
             </div>
           );

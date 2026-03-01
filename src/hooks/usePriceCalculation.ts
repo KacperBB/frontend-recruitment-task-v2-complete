@@ -25,7 +25,7 @@ export function usePriceCalculation(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Track the latest request timestamp
+  // Track the latest request ID
   const latestRequestRef = useRef<number>(0);
 
   const fetchPrice = useCallback(async () => {
@@ -34,29 +34,34 @@ export function usePriceCalculation(
       setFormattedTotal('$0.00');
       return;
     }
-
     setIsLoading(true);
     setError(null);
 
-    const requestTime = Date.now();
-    latestRequestRef.current = requestTime;
+    const requestId = ++latestRequestRef.current;
 
     try {
       const response: PriceResponse = await calculatePrice(config, product);
-
-      if (response.timestamp >= latestRequestRef.current) {
+      
+      // Only update if this is the LATEST request
+      // This prevents stale responses from overwriting newer data
+      if (response.timestamp >= requestId) {
         setPrice(response.breakdown);
         setFormattedTotal(response.formattedTotal);
+        setError(null);
       }
 
-    } catch {
+    } catch (err) {
       // Only set error if this is still the latest request
-      if (requestTime === latestRequestRef.current) {
+      if (requestId === latestRequestRef.current) {
         setError('ERR_PRICE_CALC_FAILED');
         setPrice(null);
       }
     } finally {
-      setIsLoading(false);
+      // Only set loading to false if this is the latest request
+      // Prevents stale requests from marking as complete
+      if (requestId === latestRequestRef.current) {
+        setIsLoading(false);
+      }
     }
   }, [config, product]);
 

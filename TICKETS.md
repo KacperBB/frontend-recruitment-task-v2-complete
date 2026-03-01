@@ -14,7 +14,7 @@ These tickets were pulled from our Jira board. They're in rough priority order b
 Multiple customers have reported that the price display sometimes shows incorrect values. It seems to happen when users quickly change several options in succession.
 
 ### Steps to Reproduce
-
+ 
 1. Open the configurator with a complex product
 2. Rapidly change multiple dropdown options (e.g., size, then color, then material)
 3. The displayed price sometimes doesn't match what it should be
