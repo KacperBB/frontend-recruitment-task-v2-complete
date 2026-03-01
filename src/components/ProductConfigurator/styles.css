@@ -48,6 +48,9 @@
   .configurator-layout {
     grid-template-columns: 1fr;
   }
+  .configurator-header {
+    flex-direction: column;
+  }
 }
 
 /* Options Section */
@@ -367,7 +370,21 @@
 }
 
 .price-loading {
-  opacity: 0.5;
+  opacity: 0.7;
+  position: relative;
+}
+
+.price-loading .price-value::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  border: 2px solid rgba(52, 152, 219, 0.3);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
 }
 
 /* Buttons */
