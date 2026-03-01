@@ -116,7 +116,7 @@ Seems to happen for users not in UTC timezone. Low priority since it's just cosm
 **Created:** 6 days ago
 
 ### Description
-
+ 
 Some customers report that shared configuration links don't work. When clicked, they either show an error or load the wrong configuration.
 
 ### Steps to Reproduce
