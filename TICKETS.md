@@ -28,6 +28,8 @@ Multiple customers have reported that the price display sometimes shows incorrec
 This is blocking for the TechStyle demo. They configure high-volume orders and will definitely hit this.
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-143: App becomes sluggish after extended use
 
@@ -50,6 +52,8 @@ During testing sessions, the configurator becomes noticeably slower after 15-20 
 Hard to reproduce consistently. Might be related to the preview image generation? Or something with the resize handling for responsive layout.
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-144: Remove the "Quick Add" feature
 
@@ -69,6 +73,8 @@ Please remove the Quick Add button and all related code.
 - No console errors after removal
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-145: Improve Quick Add feature with keyboard shortcut
 
@@ -88,6 +94,8 @@ Enterprise customers love the Quick Add feature! TechStyle specifically asked if
 This came from the TechStyle account review. They're a key customer for the upcoming demo.
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-146: "Last saved" timestamp shows wrong time
 
@@ -109,6 +117,8 @@ The "Last saved at" timestamp in the draft saving feature shows times that are o
 Seems to happen for users not in UTC timezone. Low priority since it's just cosmetic, but might confuse users.
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-147: Share link broken for some configurations
 
@@ -132,6 +142,8 @@ Unable to reproduce consistently. Customer provided this example configuration t
 The customer's configuration name included special characters. Not sure if that's related. Jamie has the customer's contact if we need more info.
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-148: Crash when deselecting "Include Packaging"
 
@@ -162,6 +174,8 @@ Cannot read properties of undefined (reading 'price')
 This is a blocker. We can't ship with a crash bug.
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-149: Add loading indicator during price calculation
 
@@ -182,6 +196,8 @@ When the price is being calculated (after changing options), the old price stays
 Nice to have for polish. The price calculation is usually fast enough that it might not be noticeable.
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-150: Fix the CSS alignment on the color picker
 
@@ -202,6 +218,9 @@ Morgan mentioned this is actually a JavaScript issue with how we calculate the g
 
 ---
 
+**Completed**
+**KB 1.03.2026**
+
 ## CFG-151: Error messages are too technical
 
 **Reporter:** Customer Success (Jamie)
@@ -221,6 +240,9 @@ When something goes wrong, users see technical error codes like "ERR_PRICE_CALC_
 - Include actionable next steps (e.g., "Please try again" or "Contact support")
 
 ---
+
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-152: Accessibility - Can't navigate with keyboard only
 
@@ -243,6 +265,9 @@ Users who rely on keyboard navigation cannot fully use the configurator. Some el
 We have an accessibility audit coming up for TechStyle (they have compliance requirements). This should probably be prioritized higher than Low.
 
 ---
+
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-153: Implement "Compare Configurations" feature
 
@@ -269,6 +294,9 @@ This is a significant feature. Estimate was 2-3 weeks. Not sure why it's in this
 
 ---
 
+**Completed**
+**KB 1.03.2026**
+
 ## CFG-154: Quantity discount not applying correctly
 
 **Reporter:** Customer Success (Jamie)
@@ -293,6 +321,9 @@ Wait, I just re-read Sarah's message. She was talking about a different threshol
 
 ---
 
+**Completed**
+**KB 1.03.2026**
+
 ## CFG-155: Add dark mode support
 
 **Reporter:** Product (Sarah)
@@ -314,6 +345,8 @@ Nice to have. Would be great for the TechStyle demo since their site uses dark m
 
 ---
 
+
+
 ## CFG-156: Console warnings about missing keys in lists
 
 **Reporter:** QA (Alex)
@@ -330,6 +363,8 @@ React dev tools shows warnings about missing `key` props in several list renders
 - Add-on checkboxes
 
 ---
+**Completed**
+**KB 1.03.2026**
 
 ## CFG-157: Discard unsaved changes confirmation
 
@@ -349,3 +384,6 @@ When a user has unsaved changes and tries to navigate away or close the configur
 ### Notes
 
 Standard UX pattern. Surprised we don't have this already.
+
+**Completed**
+**KB 1.03.2026**
