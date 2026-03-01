@@ -44,7 +44,7 @@ export function usePriceCalculation(
       
       // Only update if this is the LATEST request
       // This prevents stale responses from overwriting newer data
-      if (response.timestamp >= requestId) {
+      if (requestId === latestRequestRef.current) {
         setPrice(response.breakdown);
         setFormattedTotal(response.formattedTotal);
         setError(null);

@@ -313,9 +313,9 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
       try {
         const decoded = decodeConfigurationFromUrl(encodedConfig);
         if (decoded) {
-          if (decoded.selections) setSelections(decoded.selections);
-          if (decoded.addOns) setSelectedAddOns(decoded.addOns);
-          if (decoded.quantity) setQuantity(decoded.quantity);
+          if (decoded.selections !== undefined) setSelections(decoded.selections);
+          if (decoded.addOns !== undefined) setSelectedAddOns(decoded.addOns);
+          if (decoded.quantity !== undefined) setQuantity(decoded.quantity);
         }
       } catch (error) {
         console.error('Failed to load configuration from URL:', error);
@@ -1090,15 +1090,6 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
 
             {renderPriceBreakdown()}
 
-            <div className="quick-add-section">
-              <button
-                className="quick-add-btn"
-                onClick={handleQuickAdd}
-                disabled={readOnly || !validation?.valid}
-              >
-                ⚡ Quick Add to Cart
-              </button>
-            </div>
           </div>
 
           <button
