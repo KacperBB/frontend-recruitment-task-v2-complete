@@ -490,6 +490,46 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
 
   const renderColorOption = (option: ProductOption) => {
     const currentValue = selections[option.id] as string;
+    const choices = option.choices || [];
+
+    const handleColorKeyDown = (
+      e: React.KeyboardEvent,
+      choiceValue: string,
+      choiceIndex: number
+    ) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        !readOnly && handleOptionChange(option.id, choiceValue);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevIndex = (choiceIndex - 1 + choices.length) % choices.length;
+        const nextChoice = choices[prevIndex];
+        !readOnly && handleOptionChange(option.id, nextChoice.value);
+        // Focus next swatch
+        setTimeout(() => {
+          const swatches = document.querySelectorAll(
+            `[data-color-group="${option.id}"]`
+          );
+          if (swatches[prevIndex]) {
+            (swatches[prevIndex] as HTMLElement).focus();
+          }
+        });
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextIndex = (choiceIndex + 1) % choices.length;
+        const nextChoice = choices[nextIndex];
+        !readOnly && handleOptionChange(option.id, nextChoice.value);
+        // Focus next swatch
+        setTimeout(() => {
+          const swatches = document.querySelectorAll(
+            `[data-color-group="${option.id}"]`
+          );
+          if (swatches[nextIndex]) {
+            (swatches[nextIndex] as HTMLElement).focus();
+          }
+        });
+      }
+    };
 
     return (
       <div className="option-group" key={option.id}>
@@ -503,17 +543,20 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
           role="radiogroup"
           aria-label={option.name}
         >
-          {option.choices?.map((choice, index) => (
+          {choices.map((choice, index) => (
             <div
-              key={index}
+              key={choice.id}
               className={`color-swatch ${currentValue === choice.value ? "selected" : ""}`}
               style={{ backgroundColor: choice.colorHex }}
               onClick={() =>
                 !readOnly && handleOptionChange(option.id, choice.value)
               }
+              onKeyDown={(e) => handleColorKeyDown(e, choice.value, index)}
               title={choice.label}
               role="radio"
               aria-checked={currentValue === choice.value}
+              tabIndex={currentValue === choice.value ? 0 : -1}
+              data-color-group={option.id}
             />
           ))}
         </div>
@@ -724,10 +767,13 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
         className="modal-overlay"
         onClick={() => handleModalClose("draft")}
         onKeyDown={(e) => handleModalKeyDown(e, "draft")}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="draft-modal-title"
       >
         <div className="modal" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
-            <h3 className="modal-title">Saved Drafts</h3>
+            <h3 className="modal-title" id="draft-modal-title">Saved Drafts</h3>
             <button
               className="modal-close"
               onClick={() => handleModalClose("draft")}
@@ -811,10 +857,13 @@ export const ProductConfigurator: React.FC<ProductConfiguratorProps> = ({
         className="modal-overlay"
         onClick={() => handleModalClose("share")}
         onKeyDown={(e) => handleModalKeyDown(e, "share")}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="share-modal-title"
       >
         <div className="modal" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
-            <h3 className="modal-title">Share Configuration</h3>
+            <h3 className="modal-title" id="share-modal-title">Share Configuration</h3>
             <button
               className="modal-close"
               onClick={() => handleModalClose("share")}

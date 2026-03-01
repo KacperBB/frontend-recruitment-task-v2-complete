@@ -111,12 +111,18 @@
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.2s, border-color 0.2s, outline 0.2s;
   position: relative;
+  outline: none;
 }
 
 .color-swatch:hover {
   transform: scale(1.1);
+}
+
+.color-swatch:focus {
+  outline: 3px solid #3498db;
+  outline-offset: 2px;
 }
 
 .color-swatch.selected {
@@ -152,11 +158,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s, outline 0.2s;
+  outline: none;
 }
 
 .quantity-btn:hover:not(:disabled) {
   background: #f0f0f0;
+}
+
+.quantity-btn:focus:not(:disabled) {
+  outline: 3px solid #3498db;
+  outline-offset: 2px;
+  border-color: #3498db;
 }
 
 .quantity-btn:disabled {
@@ -614,9 +627,6 @@
   outline: 2px solid #3498db;
   outline-offset: 2px;
 }
-
-/* Missing focus style for color swatches - accessibility issue */
-/* .color-swatch:focus { } */
 
 /* Draft List in Modal */
 .draft-list {
