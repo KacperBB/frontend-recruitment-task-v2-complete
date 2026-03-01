@@ -61,7 +61,23 @@
   flex-direction: column;
   gap: 10px;
   width: 50%;
-} 
+}
+  .configurator-actions {
+    display: flex;
+    padding-top: 8px;
+    flex-direction: column;
+    width: 100%;
+  }
+
+    .configurator-actions .btn {
+    width: 100%;
+  }
+
+  .color-picker {
+    display: grid;
+    grid-template-columns: repeat(2, 36px);
+    justify-content: start;
+  }
 }
 
 /* Options Section */
